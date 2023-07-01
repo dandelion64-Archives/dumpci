@@ -1,17 +1,18 @@
 name: Dumping fw
  
 on:
-  push:
-    paths-ignore:
-      - '*.md'
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ROM_URL:
+        description: "Direct Link of the ROM/Firmware to Dump"
+        required: true
 
 defaults:
   run:
     shell: bash
 
 env:
-  ROM_URL: https://bigota.d.miui.com/V14.0.2.0.TKUCNXM/miui_SELENE_V14.0.2.0.TKUCNXM_f349844cfd_13.0.zip
+  ROM_URL: ${{ github.event.inputs.ROM_URL }}
   
 jobs:
   build:
@@ -23,15 +24,15 @@ jobs:
 
        - name: Clone Dumpyara
          run: |
-              sudo apt install neofetch -y
-              git clone https://github.com/fw-dumps/DumprX dumper
+              sudo apt install neofetch git-core -y
+              git clone --depth=1 --single-branch --no-tags https://github.com/fw-dumps/DumprX dumper
               sudo apt install python3-pip -y
        - name: Setup Dumpyara environment
          working-directory: dumper
          run: |
+              git config --global user.name "Example user"
+              git config --global user.email "user@example.com"
               sudo bash setup.sh
-              git config --global user.name "atharvnegi"
-              git config --global user.email "atharvnegi2951@gmail.com"
        - name: Setup config envs
          working-directory: dumper
          run: |
